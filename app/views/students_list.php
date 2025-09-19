@@ -1,4 +1,14 @@
 <div class="container">
+    <form action="<?=site_url('index');?>" method="get" class="col-sm-4 float-end d-flex">
+		<?php
+		$q = '';
+		if(isset($_GET['q'])) {
+			$q = $_GET['q'];
+		}
+		?>
+        <input class="form-control me-2" name="q" type="text" placeholder="Search" value="<?=html_escape($q);?>">
+        <button type="submit" class="btn btn-primary" type="button">Search</button>
+	</form>
     <h1>Students</h1>
     <a href="<?= site_url('students/create') ?>" class="btn-add">Add Student</a>
     <table>
@@ -26,6 +36,9 @@
         <?php endforeach; ?>
         </tbody>
     </table>
+    <?php 
+    echo $pages;
+    ?>
 </div>
 
 <style>

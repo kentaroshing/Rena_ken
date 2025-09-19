@@ -351,6 +351,32 @@ class Database {
     }
 
     /**
+     * Count all results for the current query
+     *
+     * @param bool $reset
+     * @return integer
+     */
+    public function count_all_results($reset = true)
+    {
+        $this->buildQuery();
+        $countQuery = preg_replace('/^SELECT .* FROM/i', 'SELECT COUNT(*) AS total FROM', $this->sql);
+
+        try {
+            $stmt = $this->db->prepare($countQuery);
+            $stmt->execute($this->bindValues);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($reset) {
+                $this->resetQuery();
+            }
+
+            return (int) $result['total'];
+        } catch (Exception $e) {
+            throw new PDOException($e->getMessage() . ' Query: ' . $countQuery);
+        }
+    }
+
+    /**
      * Bulk insert multiple records into the database
      *
      * @param array $records

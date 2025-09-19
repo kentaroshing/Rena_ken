@@ -11,7 +11,34 @@ class StudentController extends Controller {
     // Show all students
     public function index()
     {
-        $data['students'] = $this->StudentsModel->all();
+        $page = 1;
+        if(isset($_GET['page']) && ! empty($_GET['page'])) {
+            $page = (int) $this->io->get('page');
+        }
+
+        $q = '';
+        if(isset($_GET['q']) && ! empty($_GET['q'])) {
+            $q = trim($this->io->get('q'));
+        }
+
+        $records_per_page = 10;
+        $offset = ($page - 1) * $records_per_page;
+
+        $result = $this->StudentsModel->get_paginated($q, $records_per_page, $offset);
+        $data['students'] = $result['records'];
+        $total_rows = $result['total_rows'];
+
+        $this->pagination->set_options([
+            'first_link'     => '⏮ First',
+            'last_link'      => 'Last ⏭',
+            'next_link'      => 'Next →',
+            'prev_link'      => '← Prev',
+            'page_delimiter' => '&page='
+        ]);
+        $this->pagination->set_theme('custom');
+        $this->pagination->initialize($total_rows, $records_per_page, $page, site_url('students').'?q='.$q);
+        $data['pages'] = $this->pagination->paginate();
+
         $this->call->view('students_list', $data);
     }
 
