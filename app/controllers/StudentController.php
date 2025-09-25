@@ -8,10 +8,41 @@ class StudentController extends Controller {
         
     }
 
-    // Show all students
+    // Show all students with pagination and search
     public function index()
     {
-        $data['students'] = $this->StudentsModel->all();
+        $page = 1;
+        if (isset($_GET['page']) && !empty($_GET['page'])) {
+            $page = $this->io->get('page');
+        }
+
+        $q = '';
+        if (isset($_GET['q']) && !empty($_GET['q'])) {
+            $q = trim($this->io->get('q'));
+        }
+
+        $records_per_page = 5;
+
+        $all = $this->StudentsModel->page($q, $records_per_page, $page);
+        $data['students'] = $all['records'];
+        $total_rows = $all['total_rows'];
+
+        $this->pagination->set_options([
+            'first_link'     => 'First',
+            'last_link'      => 'Last',
+            'next_link'      => 'Next',
+            'prev_link'      => 'Previous',
+            'page_delimiter' => '&page='
+        ]);
+        $this->pagination->set_theme('bootstrap'); // or 'tailwind', or 'custom'
+        $this->pagination->initialize($total_rows, $records_per_page, $page, site_url('/') . '?q=' . $q);
+        $data['page'] = $this->pagination->paginate();
+
+        $data['total_rows'] = $total_rows;
+        $data['current_page'] = $page;
+        $data['last_page'] = (int) ceil($total_rows / $records_per_page);
+        $data['q'] = $q;
+
         $this->call->view('students_list', $data);
     }
 

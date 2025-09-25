@@ -3,7 +3,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
 /**
  * Model: StudentsModel
- * 
+ *
  * Automatically generated via CLI.
  */
 class StudentsModel extends Model {
@@ -15,9 +15,40 @@ class StudentsModel extends Model {
         parent::__construct();
     }
 
-    public function index()
+    public function index($q = '')
     {
-        return $this->db->table('students')->select('id, first_name, last_name, email')->get_all();
+        $query = $this->db->table('students')->select('id, first_name, last_name, email');
+
+        if (!empty($q)) {
+            $query->like('first_name', $q)->or_like('last_name', $q)->or_like('email', $q);
+        }
+
+        return $query->get_all();
     }
-    
+
+    public function page($q, $records_per_page = null, $page = null) {
+        if (is_null($page)) {
+            return $this->db->table('students')->get_all();
+        } else {
+            $query = $this->db->table('students');
+
+            // Build LIKE conditions
+            if (!empty($q)) {
+                $query->like('first_name', '%'.$q.'%')
+                    ->or_like('last_name', '%'.$q.'%')
+                    ->or_like('email', '%'.$q.'%');
+            }
+
+            // Clone before pagination
+            $countQuery = clone $query;
+
+            $data['total_rows'] = $countQuery->select_count('*', 'count')
+                                            ->get()['count'];
+
+            $data['records'] = $query->pagination($records_per_page, $page)
+                                    ->get_all();
+
+            return $data;
+        }
+    }
 }
