@@ -17,24 +17,34 @@ class StudentsModel extends Model {
 
     public function index()
     {
-        return $this->db->table('students')->select('id, first_name, last_name, email')->get_all();
-    }
-
-    public function get_paginated($q = '', $limit = 10, $offset = 0)
-    {
         $query = $this->db->table('students')->select('id, first_name, last_name, email');
 
-        if (!empty($q)) {
-            $query->like('first_name', $q)->or_like('last_name', $q)->or_like('email', $q);
-        }
-
-        $total_rows = $query->count_all_results(false);
-        $records = $query->limit($limit, $offset)->get_all();
-
-        return [
-            'records' => $records,
-            'total_rows' => $total_rows
-        ];
+        return $query->get_all();
     }
-    
+
+    public function page($q, $records_per_page = null, $page = null) {
+        if (is_null($page)) {
+            return $this->db->table('students')->get_all();
+        } else {
+            $query = $this->db->table('students');
+            
+            // Build LIKE conditions
+            $query->like('id', '%'.$q.'%')
+                ->or_like('first_name', '%'.$q.'%')
+                ->or_like('last_name', '%'.$q.'%')
+                ->or_like('email', '%'.$q.'%');
+                
+
+            // Clone before pagination
+            $countQuery = clone $query;
+
+            $data['total_rows'] = $countQuery->select_count('*', 'count')
+                                            ->get()['count'];
+
+            $data['records'] = $query->pagination($records_per_page, $page)
+                                    ->get_all();
+
+            return $data;
+        }
+    }
 }
