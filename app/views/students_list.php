@@ -1,11 +1,24 @@
 <div class="container" style="background-color: #e6f4ea; padding: 20px; border-radius: 12px; max-width: 900px; margin: 20px auto; font-family: Arial, sans-serif;">
-    <form action="" method="get" class="col-sm-4 float-end d-flex" style="margin-bottom: 15px;">
+    <form id="searchForm" action="" method="get" class="col-sm-4 float-end d-flex" style="margin-bottom: 15px;">
     <?php if (isset($_GET['page']) && $_GET['page'] > 1): ?>
         <input type="hidden" name="page" value="<?php echo $_GET['page']; ?>">
     <?php endif; ?>
-        <input class="form-control me-2" name="q" type="text" placeholder="Search students..." value="<?= isset($q) ? html_escape($q) : ''; ?>" style="flex-grow: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+        <input id="searchInput" class="form-control me-2" name="q" type="text" placeholder="Search students..." value="<?= isset($q) ? html_escape($q) : ''; ?>" style="flex-grow: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
         <button type="submit" class="btn btn-primary" type="button" style="background-color: #4caf50; border: none; color: white; padding: 8px 16px; border-radius: 8px; margin-left: 8px; cursor: pointer;">Search</button>
     </form>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query === '') {
+                window.location.href = '<?= site_url('/') ?>';
+            } else {
+                const url = new URL(window.location.href);
+                url.searchParams.set('q', query);
+                url.searchParams.delete('page'); // Reset to first page on new search
+                window.location.href = url.toString();
+            }
+        });
+    </script>
     <h1 style="color: #2f4f2f; font-weight: 700; margin-bottom: 15px; text-align: center;">Students</h1>
     <a href="<?= site_url('students/create') ?>" class="btn-add" style="background-color: #4caf50; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 15px;">Add Student</a>
     <table style="width: 100%; border-collapse: collapse; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
