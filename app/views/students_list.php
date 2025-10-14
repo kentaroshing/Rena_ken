@@ -20,7 +20,20 @@
         });
     </script>
     <h1 style="color: #2f4f2f; font-weight: 700; margin-bottom: 15px; text-align: center;">Students</h1>
-    <a href="<?= site_url('students/create') ?>" class="btn-add" style="background-color: #4caf50; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 15px;">Add Student</a>
+    <?php if ($session->flashdata('error')): ?>
+        <div style="color: red; margin-bottom: 15px; padding: 10px; border: 1px solid red; border-radius: 5px; background-color: #ffe6e6;">
+            <?= $session->flashdata('error') ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($session->flashdata('success')): ?>
+        <div style="color: green; margin-bottom: 15px; padding: 10px; border: 1px solid green; border-radius: 5px; background-color: #e6ffe6;">
+            <?= $session->flashdata('success') ?>
+        </div>
+    <?php endif; ?>
+    <a href="<?= site_url('logout') ?>" style="position: absolute; top: 20px; right: 20px; background-color: #d9534f; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">Logout</a>
+    <?php if (isset($user_role) && $user_role == 'admin'): ?>
+        <a href="<?= site_url('students/create') ?>" class="btn-add" style="background-color: #4caf50; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 15px;">Add Student</a>
+    <?php endif; ?>
     <table style="width: 100%; border-collapse: collapse; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         <thead>
             <tr style="background-color: #a8d5a8; color: #2f4f2f; font-weight: 700;">
@@ -39,8 +52,12 @@
                 <td style="padding: 12px 15px;"><?= htmlspecialchars($student['last_name']) ?></td>
                 <td style="padding: 12px 15px;"><?= htmlspecialchars($student['email']) ?></td>
                 <td style="padding: 12px 15px;">
-                    <a href="<?= site_url('students/edit/'.$student['id']) ?>" class="btn-edit" style="background-color: #4caf50; color: white; padding: 6px 12px; border-radius: 12px; font-weight: 600; text-decoration: none; margin-right: 8px;">Edit</a>
-                    <a href="<?= site_url('students/delete/'.$student['id']) ?>" onclick="return confirm('Are you sure you want to delete?')" class="btn-delete" style="background-color: #d9534f; color: white; padding: 6px 12px; border-radius: 12px; font-weight: 600; text-decoration: none;">Delete</a>
+                    <?php if (isset($user_role) && ($user_role == 'admin' || $student['email'] == $session->userdata('user_email'))): ?>
+                        <a href="<?= site_url('students/edit/'.$student['id']) ?>" class="btn-edit" style="background-color: #4caf50; color: white; padding: 6px 12px; border-radius: 12px; font-weight: 600; text-decoration: none; margin-right: 8px;">Edit</a>
+                    <?php endif; ?>
+                    <?php if (isset($user_role) && $user_role == 'admin'): ?>
+                        <a href="<?= site_url('students/delete/'.$student['id']) ?>" onclick="return confirm('Are you sure you want to delete?')" class="btn-delete" style="background-color: #d9534f; color: white; padding: 6px 12px; border-radius: 12px; font-weight: 600; text-decoration: none;">Delete</a>
+                    <?php endif; ?>
                 </td>
             </tr>
         <?php endforeach; ?>

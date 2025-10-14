@@ -1,77 +1,23 @@
 <div class="container fade-in">
-    <h1>Add Student</h1>
+    <h1>Register</h1>
     <?php if ($session->flashdata('error')): ?>
-        <div class="alert alert-error">
+        <div style="color: red; margin-bottom: 15px; padding: 10px; border: 1px solid red; border-radius: 5px; background-color: #ffe6e6;">
             <?= $session->flashdata('error') ?>
         </div>
     <?php endif; ?>
-    <form method="post" action="<?= site_url('students/create') ?>">
-        <label for="first_name">First Name</label>
-        <input type="text" id="first_name" name="first_name" required>
+    <form method="post" action="<?= site_url('register') ?>">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
 
-        <label for="last_name">Last Name</label>
-        <input type="text" id="last_name" name="last_name" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
 
-        <?php if ($session->userdata('user_role') == 'admin'): ?>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-        <?php endif; ?>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
 
-        <button type="submit">Save</button>
+        <button type="submit">Register</button>
     </form>
-    <div class="button-group">
-        <a href="<?= site_url('students/list') ?>" class="back-link">← Back to List</a>
-        <?php if ($session->userdata('user_role') != 'admin'): ?>
-            <button type="button" class="cancel-btn" onclick="cancelRegistration()">Cancel Registration</button>
-        <?php endif; ?>
-    </div>
-</div>
-
-<script>
-function cancelRegistration() {
-    if (confirm('Are you sure you want to cancel your registration? This will delete your user account and you can register again with the same email.')) {
-        window.location.href = '<?= site_url('user/cancel_registration') ?>';
-    }
-}
-</script>
-
-<style>
-.alert {
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-.alert-error {
-    background-color: #ffebee;
-    color: #c62828;
-    border: 1px solid #ef5350;
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 25px;
-}
-
-.cancel-btn {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-
-.cancel-btn:hover {
-    background: #d32f2f;
-}
-</style>
+    <p style="text-align: center; margin-top: 20px;">Already have an account? <a href="<?= site_url('login') ?>" style="color: #4caf50;">Login here</a></p>
 </div>
 
 <style>
@@ -123,7 +69,8 @@ label {
 }
 
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+input[type="password"] {
     width: 100%;
     padding: 14px 16px;
     border: 2px solid #a8d5a8; /* pastel green border */
@@ -136,7 +83,8 @@ input[type="email"] {
 }
 
 input[type="text"]:focus,
-input[type="email"]:focus {
+input[type="email"]:focus,
+input[type="password"]:focus {
     border-color: #4caf50; /* brighter green */
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
     background-color: #ffffff;
@@ -162,19 +110,19 @@ button:hover {
     box-shadow: 0 8px 16px rgba(56, 142, 60, 0.6);
 }
 
-a.back-link {
-    display: block;
-    margin-top: 25px;
+p {
+    margin-top: 20px;
     text-align: center;
-    color: #4caf50;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+    color: #4a7d4a;
 }
 
-a.back-link:hover {
-    color: #2e7d32;
+a {
+    color: #4caf50;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
     text-decoration: underline;
 }
 
